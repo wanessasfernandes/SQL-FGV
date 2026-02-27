@@ -28,6 +28,33 @@ WHERE ref_year BETWEEN 1972 AND 2016
 	AND country = 'Portugal'
 ORDER BY ref_year;
 
+SELECT p.Date,
+		(p.Close + p.Open)/2 AS mean,
+		(p.Close - p.Open) AS range
+FROM petrobras p 
+WHERE Date BETWEEN '2020-02-20' AND '2020-03-20'
+	AND (p.Close + p.Open)/2 > 0
+	AND (p.Close - p.Open) > 0
+
+SELECT DISTINCT w.country
+FROM women_years_at_school w
+JOIN men_years_at_school m
+	ON w.country = m.country AND m.ref_year = w.ref_year 
+JOIN country c ON c.country = w.country
+WHERE (w.mean_years - m.mean_years) <= 1
+	AND m.ref_year BETWEEN 2001 AND 2010
+	AND c.four_regions = 'africa';
+	
+SELECT cm.ref_year,
+		cm.tot_deaths,
+		cm.tot_deaths / 10 AS percent_deaths
+FROM child_mortality cm 
+WHERE cm.country = 'Brazil'
+	AND cm.ref_year BETWEEN 1910 AND 2020 
+	AND cm.ref_year % 10 = 0
+ORDER BY cm.ref_year;
+
+
 -- SUMARIZANDO DADOS 
 
 SELECT AVG(gp.gdp_pc) AS avg_gdp_pc 
@@ -36,6 +63,7 @@ JOIN country c
 	ON c.country = gp.country 
 WHERE gp.ref_year = 2020
 	AND c.four_regions = 'americas';
+
 SELECT SUM(ai.mean_usd) AS "sum", 
 	AVG(ai.mean_usd) AS mean, 
 	MAX(ai.mean_usd), 
@@ -46,3 +74,28 @@ JOIN country c
 	ON ai.country = c.country 
 WHERE ai.ref_year = 2020
 	AND c.four_regions = 'europe';
+
+SELECT c.country,
+		c.wb_regions,
+		MIN(le.tot_years) AS minimo_year,
+		MAX(le.tot_years) AS maximo_year,
+		AVG(le.tot_years) AS media_year
+FROM life_expectancy le 
+JOIN country c 
+	ON c.country = le.country 
+WHERE c.wb_regions = 'Latin America & Caribbean'
+	AND le.ref_year = 1990;
+
+SELECT ai.country,
+		AVG(gp.gdp_pc) AS pib_pc,
+		AVG(ai.mean_usd) AS renda_pc
+FROM avg_income ai
+JOIN gdp_pc gp 
+	ON ai.country = gp.country AND ai.ref_year = gp.ref_year 
+WHERE ai.ref_year = 2019;
+
+SELECT AVG(m.mean_years - w.mean_years) AS avg_diff
+FROM women_years_at_school w
+JOIN men_years_at_school m
+	ON m.country = w.country AND m.ref_year = w.ref_year 
+WHERE m.ref_year = 2000;
