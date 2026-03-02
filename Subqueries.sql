@@ -1,4 +1,4 @@
--- SUBQUERIES 
+f-- SUBQUERIES 
 
 SELECT le.country, le.tot_years 
 FROM life_expectancy le 
